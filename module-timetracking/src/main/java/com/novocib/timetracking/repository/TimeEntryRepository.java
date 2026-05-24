@@ -1,5 +1,8 @@
 package com.novocib.timetracking.repository;
 
-public interface TimeEntryRepository {
-    // Define repository methods for TimeEntry
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.novocib.timetracking.domain.TimeEntry;
+
+public interface TimeEntryRepository extends JpaRepository<TimeEntry, Long> {
 }

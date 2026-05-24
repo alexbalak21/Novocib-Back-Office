@@ -1,5 +1,21 @@
 package com.novocib.timetracking.dto;
 
 public class CreateTimeEntryInput {
-    // Define fields for time entry creation input
+
+    private String title;
+
+    public CreateTimeEntryInput() {
+    }
+
+    public CreateTimeEntryInput(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
