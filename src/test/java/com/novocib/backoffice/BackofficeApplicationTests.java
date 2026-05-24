@@ -1,4 +1,4 @@
-package app;
+package com.novocib.backoffice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
