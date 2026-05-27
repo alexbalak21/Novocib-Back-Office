@@ -6,7 +6,6 @@ import com.novocib.backoffice.stocks.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemService {
@@ -20,21 +19,20 @@ public class ItemService {
 		return repository.findAll();
 	}
 
+	public Item getById(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Item not found"));
+	}
+
 	public Item create(String name, String description) {
 		return repository.save(new Item(name, description));
 	}
 
 	public Item update(Long id, String name, String description) {
-		Optional<Item> optional = repository.findById(id);
-		if (optional.isPresent()) {
-			Item item = optional.get();
-			// Assuming setters exist or use reflection/constructor as needed
-			item = new Item(name, description); // For immutability, or set fields if mutable
-			// Set id manually if needed (JPA may not allow this)
-			// item.setId(id);
-			return repository.save(item);
-		}
-		throw new RuntimeException("Item not found");
+		Item item = getById(id);
+		item.setName(name);
+		item.setDescription(description);
+		return repository.save(item);
 	}
 
 	public boolean delete(Long id) {

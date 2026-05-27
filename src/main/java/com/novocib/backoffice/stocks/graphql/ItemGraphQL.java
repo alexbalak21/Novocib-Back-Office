@@ -22,6 +22,11 @@ public class ItemGraphQL {
         return service.getAll();
     }
 
+    @QueryMapping
+    public Item item(@Argument Long id) {
+        return service.getById(id);
+    }
+
     @MutationMapping
     public Item createItem(@Argument String name, @Argument String description) {
         return service.create(name, description);
