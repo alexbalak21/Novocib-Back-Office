@@ -1,5 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+const endpoint = import.meta.env.PUBLIC_API_URL;
 
-// https://astro.build/config
-export default defineConfig({});
+
+export default defineConfig({
+  vite: {
+    server: {
+      proxy: {
+        '/graphql': {
+          target: endpoint,
+          changeOrigin: true,
+        },
+      },
+    },
+  },
+});

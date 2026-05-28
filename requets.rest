@@ -1,0 +1,57 @@
+@baseUrl = http://localhost:8080
+@graphqlUrl = {{baseUrl}}/graphql
+
+### Get all items
+POST {{graphqlUrl}}
+Content-Type: application/json
+
+{
+	"query": "query GetItems { items { id name description } }"
+}
+
+### Get item by id
+POST {{graphqlUrl}}
+Content-Type: application/json
+
+{
+	"query": "query GetItem($id: ID!) { item(id: $id) { id name description } }",
+	"variables": {
+		"id": 1
+	}
+}
+
+### Create item
+POST {{graphqlUrl}}
+Content-Type: application/json
+
+{
+	"query": "mutation CreateItem($name: String!, $description: String) { createItem(name: $name, description: $description) { id name description } }",
+	"variables": {
+		"name": "Sample item",
+		"description": "Created from requets.rest"
+	}
+}
+
+### Update item
+POST {{graphqlUrl}}
+Content-Type: application/json
+
+{
+	"query": "mutation UpdateItem($id: ID!, $name: String!, $description: String) { updateItem(id: $id, name: $name, description: $description) { id name description } }",
+	"variables": {
+		"id": 1,
+		"name": "Updated item",
+		"description": "Updated from requets.rest"
+	}
+}
+
+### Delete item
+POST {{graphqlUrl}}
+Content-Type: application/json
+
+{
+	"query": "mutation DeleteItem($id: ID!) { deleteItem(id: $id) }",
+	"variables": {
+		"id": 1
+	}
+}
