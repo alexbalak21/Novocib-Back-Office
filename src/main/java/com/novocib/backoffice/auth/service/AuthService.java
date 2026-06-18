@@ -1,5 +1,18 @@
 package com.novocib.backoffice.auth.service;
 
+import com.novocib.backoffice.auth.domain.RefreshToken;
+import com.novocib.backoffice.auth.domain.User;
+import com.novocib.backoffice.auth.dto.LoginRequest;
+import com.novocib.backoffice.auth.dto.LoginResult;
+import com.novocib.backoffice.auth.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
 @Service
 public class AuthService {
 
@@ -18,7 +31,7 @@ public class AuthService {
     this.userRepository = userRepository;
   }
 
-  public LoginResponse login(LoginRequest request) {
+  public LoginResult login(LoginRequest request) {
     Authentication auth = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.email(), request.password())
     );
@@ -31,13 +44,16 @@ public class AuthService {
 
     RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-    // you can set refresh token in HttpOnly cookie here
-    // or return it in body if you prefer (less secure)
-
-    return new LoginResponse(accessToken, "Bearer", 900_000L); // example 15 min
+    return new LoginResult(
+        accessToken,
+        "Bearer",
+        jwtService.getAccessTokenExpirationMs(),
+        refreshToken.getToken(),
+        refreshTokenService.getRefreshTokenExpirationMs()
+    );
   }
 
-  public LoginResponse refresh(String refreshTokenValue) {
+  public LoginResult refresh(String refreshTokenValue) {
     RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenValue)
         .map(refreshTokenService::verifyExpiration)
         .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
@@ -50,7 +66,18 @@ public class AuthService {
     );
 
     String newAccessToken = jwtService.generateAccessToken(userDetails);
+    RefreshToken newRefreshToken = refreshTokenService.rotateRefreshToken(refreshToken);
 
-    return new LoginResponse(newAccessToken, "Bearer", 900_000L);
+    return new LoginResult(
+        newAccessToken,
+        "Bearer",
+        jwtService.getAccessTokenExpirationMs(),
+        newRefreshToken.getToken(),
+        refreshTokenService.getRefreshTokenExpirationMs()
+    );
+  }
+
+  public void revokeRefreshToken(String refreshTokenValue) {
+    refreshTokenService.revokeRefreshToken(refreshTokenValue);
   }
 }

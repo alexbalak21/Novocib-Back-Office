@@ -1,5 +1,18 @@
 package com.novocib.backoffice.auth.service;
 
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.novocib.backoffice.auth.domain.RefreshToken;
+import com.novocib.backoffice.auth.domain.User;
+import com.novocib.backoffice.auth.repository.RefreshTokenRepository;
+import com.novocib.backoffice.auth.repository.UserRepository;
+
 @Service
 public class RefreshTokenService {
 
@@ -18,7 +31,6 @@ public class RefreshTokenService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    // optional: delete old tokens for this user
     refreshTokenRepository.deleteByUser(user);
 
     RefreshToken token = new RefreshToken();
@@ -27,6 +39,16 @@ public class RefreshTokenService {
     token.setExpiryDate(Instant.now().plusMillis(refreshTokenExpirationMs));
 
     return refreshTokenRepository.save(token);
+  }
+
+  public RefreshToken rotateRefreshToken(RefreshToken existingToken) {
+    User user = existingToken.getUser();
+    refreshTokenRepository.delete(existingToken);
+    return createRefreshToken(user.getId());
+  }
+
+  public void revokeRefreshToken(String tokenValue) {
+    refreshTokenRepository.findByToken(tokenValue).ifPresent(refreshTokenRepository::delete);
   }
 
   public RefreshToken verifyExpiration(RefreshToken token) {
@@ -39,5 +61,9 @@ public class RefreshTokenService {
 
   public Optional<RefreshToken> findByToken(String token) {
     return refreshTokenRepository.findByToken(token);
+  }
+
+  public long getRefreshTokenExpirationMs() {
+    return refreshTokenExpirationMs;
   }
 }

@@ -32,6 +32,9 @@ public class User {
 
   private boolean enabled = true;
 
+  public User() {
+  }
+
   public User(Long id, String email, String password, Set<String> roles, boolean enabled) {
     this.id = id;
     this.email = email;
