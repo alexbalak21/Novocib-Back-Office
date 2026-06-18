@@ -4,6 +4,7 @@ import com.novocib.backoffice.auth.domain.RefreshToken;
 import com.novocib.backoffice.auth.domain.User;
 import com.novocib.backoffice.auth.dto.LoginRequest;
 import com.novocib.backoffice.auth.dto.LoginResult;
+import com.novocib.backoffice.auth.jwt.JwtService;
 import com.novocib.backoffice.auth.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

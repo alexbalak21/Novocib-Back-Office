@@ -1,5 +1,16 @@
 package com.novocib.backoffice.auth.service;
 
+import com.novocib.backoffice.auth.domain.User;
+import com.novocib.backoffice.auth.repository.UserRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -16,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     List<GrantedAuthority> authorities = user.getRoles().stream()
         .map(SimpleGrantedAuthority::new)
-        .toList();
+        .collect(Collectors.toList());
 
     return new org.springframework.security.core.userdetails.User(
         user.getEmail(),

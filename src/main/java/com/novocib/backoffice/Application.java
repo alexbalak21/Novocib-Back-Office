@@ -8,11 +8,7 @@ import com.novocib.backoffice.auth.config.AuthModuleConfig;
 
 @SpringBootApplication
 @Import({
-  AuthModuleConfig.class,
-  StocksModuleConfig.class,
-  InvoicesModuleConfig.class,
-  OrdersModuleConfig.class,
-  TimeTrackingModuleConfig.class
+  AuthModuleConfig.class
 })
 public class Application {
 
